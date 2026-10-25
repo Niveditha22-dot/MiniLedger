@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  phone     String   @unique
+  createdAt DateTime @default(now())
+  loans     Loan[]
+}
+
+model Otp {
+  id        Int      @id @default(autoincrement())
+  phone     String
+  code      String
+  expiresAt DateTime
+
+  @@index([phone])
+}
+
+model Loan {
+  id         Int       @id @default(autoincrement())
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id])
+  friendName String
+  amount     Int
+  dueDate    DateTime
+  repaidAt   DateTime?
+  receiptPath String?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+}
